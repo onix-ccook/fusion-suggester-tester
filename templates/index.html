@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="col-sm-12 col-md-12">
                     <label>Suggestion Endpoint: <font style="color:red">*</font></label>
-                    <input id="endpoint" list="endpoints" class="form-control" type="text" size="80" placeholder="http://hostname.domain.dom/api/apps/MyApp/query/suggest">
+                    <input id="endpoint" class="form-control" type="text" size="80" placeholder="http://hostname.domain.dom/api/apps/MyApp/query/suggest">
                 </div>
             </div>
             <p>&nbsp;</p>
@@ -43,12 +43,12 @@
                             <div id="basic" class="panel-collapse collapse">
                                 <div class="row">
                                     <div class="col-sm-6 col-md-6">
-                                        <label>Endpoint Username: <font style="color:red">*</font></label>
-                                        <input id="user" class="form-control" type="text" placeholder="username">
+                                        <form><label>Endpoint Username: <font style="color:red">*</font></label>
+                                        <input id="user" class="form-control" type="text" placeholder="username" autocomplete="username"></form>
                                     </div>
                                     <div class="col-sm-6 col-md-6">
-                                        <label>Endpoint Password: <font style="color:red">*</font></label>
-                                        <input id="pass" class="form-control" type="password" placeholder="password">
+                                        <form><label>Endpoint Password: <font style="color:red">*</font></label>
+                                        <input id="pass" class="form-control" type="password" placeholder="password" autocomplete="password"></form>
                                     </div>
                                 </div>
                             </div>

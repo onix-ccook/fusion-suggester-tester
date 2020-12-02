@@ -35,21 +35,27 @@ def suggest():
     if token != "":
         headers = {"Authorization": "Bearer " + token}
         r = requests.get(url, headers=headers)
-    else:
+    elif username != "" and password != "":
         r = requests.get(url, auth=(username, password))
+    else:
+        r = requests.get(url)
 
-    rJson = json.loads(r.text)
-    rList = []
+    if r.status_code != 200:
+        err = str(r.status_code) + " error on backend request"
+        return str([err]).replace("\'", "\"")
+
+    r_json = json.loads(r.text)
+    r_list = []
 
     # use this when parsing Solr SUGGEST queries
-    for x in rJson["suggest"]["Suggestions"][query]["suggestions"]:
-        rList.append(x["term"])
+    for x in r_json["suggest"]["Suggestions"][query]["suggestions"]:
+        r_list.append(x["term"])
 
     # use this when parsing Solr SELECT queries
-    # for x in rJson["response"]["docs"]:
-    #    rList.append(x["query"]) # 'query' should match the field name returned in the JSON docs list
+    # for x in r_json["response"]["docs"]:
+    #    r_list.append(x["query"]) # 'query' should match the field name returned in the JSON docs list
 
-    return str(rList).replace("\'", "\"")
+    return str(r_list).replace("\'", "\"")
 
 
 if __name__ == "__main__":
