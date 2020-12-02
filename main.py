@@ -31,14 +31,16 @@ def suggest():
     username = request.args.get('u')
     password = request.args.get('p')
     url = endpoint + "?q=" + query
+    session = requests.Session()
+    session.trust_env = False  # bypass proxies
 
     if token != "":
         headers = {"Authorization": "Bearer " + token}
-        r = requests.get(url, headers=headers)
+        r = session.get(url, headers=headers, verify=False)
     elif username != "" and password != "":
-        r = requests.get(url, auth=(username, password))
+        r = session.get(url, auth=(username, password), verify=False)
     else:
-        r = requests.get(url)
+        r = session.get(url, verify=False)
 
     if r.status_code != 200:
         err = str(r.status_code) + " error on backend request"
@@ -47,13 +49,16 @@ def suggest():
     r_json = json.loads(r.text)
     r_list = []
 
-    # use this when parsing Solr SUGGEST queries
-    for x in r_json["suggest"]["Suggestions"][query]["suggestions"]:
-        r_list.append(x["term"])
-
-    # use this when parsing Solr SELECT queries
-    # for x in r_json["response"]["docs"]:
-    #    r_list.append(x["query"]) # 'query' should match the field name returned in the JSON docs list
+    if "suggest" in r_json:
+        # use this when parsing Solr SUGGEST queries
+        for x in r_json["suggest"]["Suggestions"][query]["suggestions"]:
+            r_list.append(x["term"])
+    elif "response" in r_json:
+        # use this when parsing Solr SELECT queries
+        for x in r_json["response"]["docs"]:
+            r_list.append(x["query"])  # 'query' should match the field name returned in the JSON docs list
+    else:
+        return str(["unable to parse Fusion response"])
 
     return str(r_list).replace("\'", "\"")
 
