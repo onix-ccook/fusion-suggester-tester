@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <title>Typeahead Playground - Python</title>
+    <style>.panel-collapse { padding: 15px; }</style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 main">
+            <h2 class="sub-header">Typeahead Playground: Python Example</h2>
+            <h3>bootstrap3-typeahead.js v4.0.2</h3>
+            <p>Typeahead enables users to quickly find and select from a pre-populated list of values as they type, leveraging searching and filtering.</p>
+            <h3>About</h3>
+            <p>The Typeahead widget provides suggestions while you type into the field. The data source is a server-side Python script which queries the <strong>Suggestion Endpoint</strong> and returns a list of suggestions. Check the browser console and network activity (F12) to validate what this page is sending/receiving to/from the Python script.</p>
+            <h3>Test</h3>
+            <p>Get the Python code and sample web page <a href="/code">here</a>. Requires Python 7 with <strong>flask</strong> and <strong>requests</strong> modules installed.</p>
+
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <label>Suggestion Endpoint: <font style="color:red">*</font></label>
+                    <input id="endpoint" list="endpoints" class="form-control" type="text" size="80" placeholder="http://hostname.domain.dom/api/apps/MyApp/query/suggest">
+                </div>
+            </div>
+            <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div class="panel-group basic-auth" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#basic">
+                                        Use Basic Authentication
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="basic" class="panel-collapse collapse">
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6">
+                                        <label>Endpoint Username: <font style="color:red">*</font></label>
+                                        <input id="user" class="form-control" type="text" placeholder="username">
+                                    </div>
+                                    <div class="col-sm-6 col-md-6">
+                                        <label>Endpoint Password: <font style="color:red">*</font></label>
+                                        <input id="pass" class="form-control" type="password" placeholder="password">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#jwt">
+                                        Use JWT Authentication
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="jwt" class="panel-collapse collapse">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12">
+                                        <label>Bearer Token: <font style="color:red">*</font></label>
+                                        <input id="token" class="form-control" type="text" size="30" placeholder="Paste JWT here...">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-6">
+                    <div class="ui-widget">
+                        <span style="background-color: #FFFF00"><label>Typeahead Test:</label></span>
+                        <input class="typeahead form-control" type="text" data-provide="typeahead" placeholder="Start Typing..." autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+    $('.typeahead').typeahead({
+        minLength: 1,
+        source: function (query, process) {
+            var endpoint = $('#endpoint').val();
+            var username = $('#user').val();
+            var password = $('#pass').val();
+            var token = $('#token').val();
+            var suggest_url = 'suggest?e=' + endpoint + '&u=' + username + '&p=' + password + '&t=' + token;
+            console.log(suggest_url);
+            return $.get(suggest_url, { q: query }, function (data) {
+                console.log(data);
+                return process(data);
+            },'json');
+        }
+    });
+    </script>
+  </body>
+</html>

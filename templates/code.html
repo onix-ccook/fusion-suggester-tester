@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <title>Typeahead Playground - Code</title>
+    <style>pre {font-size: 11px; color: #9504a7; background-color: #f9f2fb;}</style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 main">
+            <h2 class="sub-header">Typeahead Playground: Python Example Code Reveal</h2>
+            <h3>bootstrap3-typeahead.js v4.0.2</h3>
+            <p>Here's the code...</p>
+            <h3>main.py</h3>
+            <p>Run this program using: <code>python3 main.py</code></p>
+            <p>Then go to this URL: <code>http://localhost:8080/</code></p>
+            <pre>
+from flask import Flask, render_template, request
+import requests
+import json
+
+# App config
+app = Flask(__name__)
+
+@app.route("/", methods=['GET'])
+def start():
+    return render_template('index.html')
+
+@app.route("/suggest", methods=['GET'])
+def suggest():
+    query = request.args.get('q')
+    token = request.args.get('t')
+    endpoint = request.args.get('e')
+    username = request.args.get('u')
+    password = request.args.get('p')
+    url = endpoint + "?q=" + query
+
+    if token != "":
+        headers = { "Authorization": "Bearer " + token }
+        r = requests.get(url, headers=headers)
+    else:
+        r = requests.get(url, auth=(username,password))
+    
+    rJson = json.loads(r.text)
+    rList = []
+
+    for x in rJson["suggest"]["Suggestions"][query]["suggestions"]:
+        rList.append(x["term"])
+    
+    return str(rList).replace("\'","\"")
+
+if __name__ == "__main__":
+    app.run(host='127.0.0.1', port=8080, debug=False)
+            </pre>
+            <h3>index.html</h3>
+            <p>Place this file in a folder named: <code>templates</code></p>
+            <p>Edit and replace values for: <code>endpoint</code>, <code>username</code>, and <code>password</code>. Set an optional <code>token</code> if you want to test Bearer Authentication using a JWT.</p>
+            <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+    &lt;head&gt;
+    &lt;title&gt;Typeahead Test - Python&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+    &lt;input class="typeahead" type="text" placeholder="Start Typing..." autocomplete="off"&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript"&gt;
+    $('.typeahead').typeahead({
+        minLength: 1,
+        source: function (query, cb) {
+            var endpoint = 'http://FUSION_HOST:6764/api/apps/MyAPP/query/MyPROFILE';
+            var username = 'username';
+            var password = 'password';
+            var token = ''; // add a JWT here for testing Bearer Authentication
+            var suggest_url = 'suggest?e=' + endpoint + '&u=' + username + '&p=' + password + '&t=' + token;
+            console.log(suggest_url);
+            return $.get(suggest_url, { q: query }, function (data) {
+                console.log(data);
+                return cb(data);
+            },'json');
+        }
+    });
+    &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+            </pre>
+            <h3>requirements.txt</h3>
+            <p>Load these modules using: <code>pip install -r requirements.txt</code></p>
+            <pre>
+flask
+requests
+            </pre>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+  </body>
+</html>

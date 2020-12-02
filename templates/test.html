@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Typeahead Test - Python</title>
+  </head>
+  <body>
+    <input class="typeahead" type="text" placeholder="Start Typing..." autocomplete="off">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+    <script type="text/javascript">
+    $('.typeahead').typeahead({
+        minLength: 1,
+        source: function (query, cb) {
+            var endpoint = 'http://35.239.111.206:6764/api/apps/Onix_Site_Search/query/onix_site_search_suggest';
+            var username = 'suggest-test';
+            var password = 'On1xR0cks';
+            var token = '';
+            var suggest_url = 'suggest?e=' + endpoint + '&u=' + username + '&p=' + password + '&t=' + token;
+            console.log(suggest_url);
+            return $.get(suggest_url, { q: query }, function (data) {
+                console.log(data);
+                return cb(data);
+            },'json');
+        }
+    });
+    </script>
+  </body>
+</html>
